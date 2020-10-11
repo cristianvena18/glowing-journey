@@ -1,0 +1,11 @@
+version: '2'
+services:
+  web:
+    image: hayd/alpine-deno
+    hostname: dev
+    ports:
+      - "80:80"
+    volumes:
+       - "../src:/opt/server"
+       - "./done-compile:/root"
+    command: "deno run -c opt/server/tsconfig.json --allow-net --unstable opt/server/app.ts"

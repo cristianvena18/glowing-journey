@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "importsNotUsedAsValues": "remove",
+    "isolatedModules": false
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

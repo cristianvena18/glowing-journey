@@ -1,0 +1,6 @@
+.idea/
+zeepdocker/mysql-data/
+zeepdocker/mysql-config/
+zeepdocker/done-compile/
+zeepdocker/redis-data/
+zeepdocker/src
