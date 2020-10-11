@@ -8,4 +8,4 @@ services:
     volumes:
        - "../src:/opt/server"
        - "./done-compile:/root"
-    command: "deno run -c opt/server/tsconfig.json --allow-net --unstable opt/server/app.ts"
+    command: "deno run -c opt/server/tsconfig.json --allow-net --unstable --allow-read opt/server/public/index.ts"
