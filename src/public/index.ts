@@ -1,7 +1,8 @@
 // Use the router
-import {bold, cyan, green, yellow} from '../vendor/fmt/colors.ts';
-import {Application, Context, Status} from "../vendor/server/index.ts";
+import {bold, cyan, green, red, yellow} from '../vendor/fmt/colors.ts';
+import {Application, Context, isHttpError, Status} from "../vendor/server/index.ts";
 import Routes from "../API/Http/Routes/index.ts";
+import BaseHttpException from "../API/Http/Exceptions/BaseHttpException.ts";
 
 function notFound(context: Context) {
     context.response.status = Status.NotFound;
@@ -32,6 +33,37 @@ app.use(async (context, next) => {
     await next();
     const ms = Date.now() - start;
     context.response.headers.set("X-Response-Time", `${ms}ms`);
+});
+
+// @ts-ignore
+app.use(async (context, next) => {
+    try {
+        await next();
+    } catch (err) {
+        if (isHttpError(err)) {
+            context.response.status = err.status;
+            const { message, status, stack } = err;
+            if (context.request.accepts("json")) {
+                context.response.body = { message, status, stack };
+                context.response.type = "json";
+            } else {
+                context.response.body = `${status} ${message}\n\n${stack ?? ""}`;
+                context.response.type = "text/plain";
+            }
+        } else {
+            if (err instanceof BaseHttpException)
+            {
+                console.error(red(`Error: ${err.message}`));
+
+                context.response.body = {message: err.message, stack: err.stack};
+                context.response.status = err.getStatus();
+                context.response.type = 'json';
+                return;
+            }
+            console.log(err);
+            throw err;
+        }
+    }
 });
 
 app.use(Routes.routes());
