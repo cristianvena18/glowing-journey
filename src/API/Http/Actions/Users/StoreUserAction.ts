@@ -1,23 +1,19 @@
 import StoreUserAdapter from "../../Adapters/Users/StoreUserAdapter.ts";
 import StoreUserHandler from "../../../../Application/Commands/Handler/Users/StoreUserHandler.ts";
 import HttpStatus from "../../Enums/HttpStatus.ts";
+import {Request, Response} from "../../../../vendor/Interfaces/Http/Server.ts";
 
 class StoreUserAction {
-    public async execute({request, response}: any) {
+    // @ts-ignore
+    public async execute(request: Request): Promise<Response> {
         const adapter = new StoreUserAdapter();
 
         const handler = new StoreUserHandler();
 
-        if (request.type !== 'json') {
-            response.status = HttpStatus.BAD_REQUEST;
-            response.body = 'Only accepts json';
-        }
+        const command = await adapter.adapt(request.body);
 
-        const body = await request.body().value;
-
-        const command = await adapter.adapt(body);
-
-        response.body = await handler.execute(command);
+        const user = await handler.execute(command);
+        return {body: user, status: HttpStatus.OK};
     }
 }
 

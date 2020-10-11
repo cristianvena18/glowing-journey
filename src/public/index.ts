@@ -3,6 +3,7 @@ import {bold, cyan, green, red, yellow} from '../vendor/fmt/colors.ts';
 import {Application, Context, isHttpError, Status} from "../vendor/server/index.ts";
 import Routes from "../API/Http/Routes/index.ts";
 import BaseHttpException from "../API/Http/Exceptions/BaseHttpException.ts";
+import HttpStatus from "../API/Http/Enums/HttpStatus.ts";
 
 function notFound(context: Context) {
     context.response.status = Status.NotFound;
@@ -11,6 +12,19 @@ function notFound(context: Context) {
 }
 
 let app = new Application();
+
+// @ts-ignore
+app.use(async (context, next) => {
+    const request = await context.request.body();
+
+    if (request.type !== 'json') {
+        context.response.status = HttpStatus.NOT_ACCEPTABLE;
+        context.response.type = 'json';
+        context.response.body = { message: 'Only accepts json' };
+        return;
+    }
+    await next();
+})
 
 // Logger
 // @ts-ignore

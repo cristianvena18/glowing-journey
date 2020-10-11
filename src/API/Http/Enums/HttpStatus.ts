@@ -1,5 +1,7 @@
 export default {
     OK: 200,
-    NOT_FOUND: 404, BAD_REQUEST: 400
-
+    NOT_FOUND: 404,
+    BAD_REQUEST: 400,
+    NOT_ACCEPTABLE: 406,
+    UNPROCESSABLE_ENTITY: 422,
 }
